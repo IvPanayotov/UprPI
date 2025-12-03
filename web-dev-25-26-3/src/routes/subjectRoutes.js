@@ -76,7 +76,6 @@ router.get("/:id", async (req, res) => {
 });
 
 // PUT /:id - Update a subject
-// Update Subject
 router.put("/:id", async (req, res) => {
   try {
     const subjectRepo = AppDataSource.getRepository("Subject");
@@ -119,6 +118,79 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// additional task
+router.post("/:studentId/subjects/:subjectId", async (req, res) => {
+  try {
+    const { studentId, subjectId } = req.params;
+
+    const studentRepo = AppDataSource.getRepository("Student");
+    const subjectRepo = AppDataSource.getRepository("Subject");
+
+    // Check if student exists
+    const student = await studentRepo.findOne({ where: { id: Number(studentId) }, relations: ["subjects"] });
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+
+    // Check if subject exists
+    const subject = await subjectRepo.findOne({ where: { id: Number(subjectId) } });
+    if (!subject) {
+      return res.status(404).json({ error: "Subject not found" });
+    }
+
+    // Check if already enrolled
+    if (student.subjects.some(s => s.id === subject.id)) {
+      return res.status(409).json({ error: "Student already enrolled in this subject" });
+    }
+
+    // Enroll student
+    student.subjects.push(subject);
+    await studentRepo.save(student);
+
+    res.status(201).json({ message: "Student enrolled successfully", student });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.delete("/:studentId/subjects/:subjectId", async (req, res) => {
+  try {
+    const { studentId, subjectId } = req.params;
+
+    const studentRepo = AppDataSource.getRepository("Student");
+    const student = await studentRepo.findOne({ where: { id: Number(studentId) }, relations: ["subjects"] });
+
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+
+    student.subjects = student.subjects.filter(s => s.id !== Number(subjectId));
+    await studentRepo.save(student);
+
+    res.json({ message: "Student unenrolled successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.get("/:studentId/subjects", async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    const studentRepo = AppDataSource.getRepository("Student");
+    const student = await studentRepo.findOne({ where: { id: Number(studentId) }, relations: ["subjects"] });
+
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+
+    res.json(student.subjects);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;
 

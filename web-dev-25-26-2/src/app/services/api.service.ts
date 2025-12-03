@@ -88,21 +88,22 @@ export class ApiService {
     return this.http.get<AppSubject[]>(`${API_URL}/subjects`);
   }
   // getSubject(id: number): Observable<Subject>
-  // createSubject(subject: Omit<Subject, 'id'>): Observable<Subject>
-  // updateSubject(id: number, subject: Partial<Subject>): Observable<Subject>
-  // deleteSubject(id: number): Observable<void>
   getSubject(id: number): Observable<AppSubject> {
     return this.http.get<AppSubject>(`${API_URL}/subjects/${id}`);
   }
+  
 
+  // createSubject(subject: Omit<Subject, 'id'>): Observable<Subject>
   createSubject(AppSubject: Omit<AppSubject, 'id'>): Observable<AppSubject> {
     return this.http.post<AppSubject>(`${API_URL}/subjects`,AppSubject);
   }
 
+  // updateSubject(id: number, subject: Partial<Subject>): Observable<Subject>
   updateSubject(id: number, AppSubject: Partial<AppSubject>): Observable<AppSubject> {
     return this.http.put<AppSubject>(`${API_URL}/subjects/${id}`, AppSubject);
   }
 
+  // deleteSubject(id: number): Observable<void>
   deleteSubject(id: number): Observable<void> {
     return this.http.delete<void>(`${API_URL}/subjects/${id}`);
   }

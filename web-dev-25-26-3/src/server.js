@@ -38,6 +38,7 @@ app.get("/", (req, res) => {
         "DELETE /api/students/:id": "Delete a student",
       },
       // TODO: Add subjects endpoints documentation
+      
       subjects: {
          "POST /api/subjects": "Create a new subject",
          "GET /api/subjects": "Get all subjects",

@@ -37,11 +37,10 @@ module.exports = new EntitySchema({
       nullable: false,
     },
 
-    // Owning side на many-to-many
     subjects: {
       target: "Subject",
       type: "many-to-many",
-      joinTable: true,   // НИЩО друго тук – оставяме TypeORM сам да си ги кръсти
+      joinTable: true,
     },
   },
 });
